@@ -1,0 +1,26 @@
+{
+  "version": "1.0.2-*",
+  "buildOptions": {
+    "debugType": "portable"
+  },
+  "dependencies": { 
+    "SharpSettings.MongoDB": {
+      "target": "project"
+    }
+  },
+  "frameworks": {
+    "netstandard1.6": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.1",
+        "MongoDB.Driver": "*",
+        "Microsoft.Extensions.Configuration": "*"
+      }
+    },
+    "net46":{
+      "dependencies":{
+        "MongoDB.Driver": "*",
+        "Microsoft.Extensions.Configuration": "*"
+      }
+    }
+  }
+}
