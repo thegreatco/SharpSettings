@@ -5,6 +5,12 @@
     <DebugType>portable</DebugType>
     <AssemblyName>SharpSettings.MongoDB</AssemblyName>
     <RootNamespace>SharpSettings.MongoDB</RootNamespace>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>TheGreatCO</Authors>
+    <Company>TheGreatCO</Company>
+    <Description />
+    <PackageProjectUrl>https://github.com/thegreatco/SharpSettings</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/thegreatco/SharpSettings</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CompareNETObjects" Version="3.06.0" />

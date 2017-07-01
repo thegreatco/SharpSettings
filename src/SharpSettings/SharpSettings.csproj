@@ -5,5 +5,11 @@
     <DebugType>portable</DebugType>
     <AssemblyName>SharpSettings</AssemblyName>
     <RootNamespace>SharpSettings</RootNamespace>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>TheGreatCO</Authors>
+    <Company>TheGreatCO</Company>
+    <Description />
+    <PackageProjectUrl>https://github.com/thegreatco/SharpSettings</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/thegreatco/SharpSettings</RepositoryUrl>
   </PropertyGroup>
 </Project>

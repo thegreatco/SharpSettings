@@ -5,6 +5,12 @@
     <DebugType>portable</DebugType>
     <AssemblyName>SharpSettings.MongoDB.AspNet</AssemblyName>
     <RootNamespace>SharpSettings.MongoDB.AspNet</RootNamespace>
+    <PackageProjectUrl>https://github.com/thegreatco/SharpSettings</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/thegreatco/SharpSettings</RepositoryUrl>
+    <Authors>TheGreatCO</Authors>
+    <Company>TheGreatCO</Company>
+    <Description />
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
