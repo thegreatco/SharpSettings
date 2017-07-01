@@ -3,30 +3,39 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using MongoDB.Driver;
 using Microsoft.Extensions.Configuration;
 
 namespace SharpSettings.MongoDB.AspNet
 {
-    public class MongoDBConfigurationProvider<T> : Microsoft.Extensions.Configuration.ConfigurationProvider where T : MongoWatchableSettings
+    public class MongoDBConfigurationProvider<TSettingsObject> : ConfigurationProvider where TSettingsObject : MongoWatchableSettings
     {
-        MongoDataStore<T> Store { get; }
+        private readonly MongoSettingsWatcher<TSettingsObject> _settingsWatcher;
+        private readonly string _settingsId;
+        MongoDataStore<TSettingsObject> Store { get; }
         bool ReloadOnChange { get; }
-        public MongoDBConfigurationProvider(MongoDataStore<T> store, bool reloadOnChange)
+
+        public MongoDBConfigurationProvider(MongoDataStore<TSettingsObject> store, string settingsId, bool reloadOnChange)
         {
             Store = store;
+            _settingsId = settingsId;
             ReloadOnChange = reloadOnChange;
             if (ReloadOnChange)
             {
-                throw new NotImplementedException();
+                _settingsWatcher = new MongoSettingsWatcher<TSettingsObject>(Store, settingsId, settings => Data = GetProperties(settings).ToDictionary(x => x.Item1, x => x.Item2.ToString()));
             }
         }
 
         public override void Load()
         {
-            var settings = Store.Find();
-		    var stuff = GetProperties(settings);
-		    Data = stuff.ToDictionary(x => x.Item1, x => x.Item2.ToString());
+            var settings = Store.Find(_settingsId);
+            if (settings == null)
+                throw new Exception("Failed to load settings.");
+
+		    var dbSettings = GetProperties(settings);
+            if (dbSettings == null)
+                return;
+                
+		    Data = dbSettings.ToDictionary(x => x.Item1, x => x.Item2.ToString());
         }
 
         public override void Set(string key, string value)
@@ -58,6 +67,7 @@ namespace SharpSettings.MongoDB.AspNet
                 foreach (var property in type.GetTypeInfo().DeclaredProperties.Where(x => x.PropertyType.GetTypeInfo().IsClass))
                 {
                     var val = property.GetValue(obj);
+                    if(val == null) continue;
                     var props = GetProperties(val, currentFieldName == null ? property.Name : string.Join(":", currentFieldName, property.Name)).ToArray();
                     if (props.Any())
                         stuffToReturn.AddRange(props);

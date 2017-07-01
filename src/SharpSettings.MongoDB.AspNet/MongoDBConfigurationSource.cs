@@ -1,22 +1,23 @@
-using MongoDB.Driver;
 using Microsoft.Extensions.Configuration;
 
 namespace SharpSettings.MongoDB.AspNet
 {
-    public class MongoDBConfigurationSource<T> : IConfigurationSource where T : MongoWatchableSettings
+    public class MongoDBConfigurationSource<TSettingsObject> : IConfigurationSource where TSettingsObject : MongoWatchableSettings
     {
-        private readonly MongoDataStore<T> Store;
+        private readonly MongoDataStore<TSettingsObject> Store;
         private readonly bool ReloadOnChange;
+        private readonly string SettingsId;
 
-        public MongoDBConfigurationSource(MongoDataStore<T> store, bool reloadOnChange)
+        public MongoDBConfigurationSource(MongoDataStore<TSettingsObject> store, string settingsId, bool reloadOnChange)
         {
             Store = store;
+            SettingsId = settingsId;
             ReloadOnChange = reloadOnChange;
         }
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            return new MongoDBConfigurationProvider<T>(Store, ReloadOnChange);
+            return new MongoDBConfigurationProvider<TSettingsObject>(Store, SettingsId, ReloadOnChange);
         }
     }
 }

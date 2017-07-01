@@ -1,37 +1,38 @@
 using System.Threading.Tasks;
-using SharpSettings;
 using MongoDB.Driver;
-using MongoDB.Bson;
+using SharpSettings;
 
 namespace SharpSettings.MongoDB
 {
-    public class MongoDataStore<TSettingsObject> : IDataStore<TSettingsObject, ObjectId> where TSettingsObject : MongoWatchableSettings
+    public class MongoDataStore<TSettingsObject> : IDataStore<string, TSettingsObject> where TSettingsObject : MongoWatchableSettings
     {
-        private readonly IMongoCollection<TSettingsObject> _store;
+        internal readonly IMongoCollection<TSettingsObject> Store;
+        internal readonly ILogger Logger;
 
-        public MongoDataStore(IMongoCollection<TSettingsObject> store)
+        public MongoDataStore(IMongoCollection<TSettingsObject> store, ILogger logger = null)
         {
-            _store = store;
+            Store = store;
+            Logger = logger;
         }
 
-        public async Task<TSettingsObject> FindAsync(ObjectId settingsId)
+        public async Task<TSettingsObject> FindAsync(string settingsId)
         {
-            return await _store.Find(Builders<TSettingsObject>.Filter.Eq(x => x.Id, settingsId)).SingleOrDefaultAsync();
+            return await Store.Find(Builders<TSettingsObject>.Filter.Eq(x => x.Id, settingsId)).SingleOrDefaultAsync();
         }
 
         public async Task<TSettingsObject> FindAsync()
         {
-            return await _store.Find(Builders<TSettingsObject>.Filter.Empty).FirstOrDefaultAsync();
+            return await Store.Find(Builders<TSettingsObject>.Filter.Empty).FirstOrDefaultAsync();
         }
 
-        public TSettingsObject Find(ObjectId settingsId)
+        public TSettingsObject Find(string settingsId)
         {
-            return _store.Find(Builders<TSettingsObject>.Filter.Eq(x => x.Id, settingsId)).SingleOrDefault();
+            return Store.Find(Builders<TSettingsObject>.Filter.Eq(x => x.Id, settingsId)).SingleOrDefault();
         }
 
         public TSettingsObject Find()
         {
-            return _store.Find(Builders<TSettingsObject>.Filter.Empty).FirstOrDefault();
+            return Store.Find(Builders<TSettingsObject>.Filter.Empty).FirstOrDefault();
         }
     }
 }

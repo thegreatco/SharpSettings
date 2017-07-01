@@ -1,42 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <VersionPrefix>1.0.2</VersionPrefix>
-    <TargetFrameworks>netstandard1.6;net46</TargetFrameworks>
-    <RuntimeIdentifiers>win7-x64;win7-x86;osx.10.10-x64;osx.10.11-x64;ubuntu.14.04-x64;ubuntu.16.04-x64;centos.7-x64;rhel.7.2-x64;debian.8-x64;fedora.23-x64;opensuse.13.2-x64</RuntimeIdentifiers>
+    <VersionPrefix>1.0.14</VersionPrefix>
+    <TargetFramework>netstandard1.6</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>SharpSettings.MongoDB</AssemblyName>
+    <RootNamespace>SharpSettings.MongoDB</RootNamespace>
   </PropertyGroup>
-
   <ItemGroup>
-    <Compile Include="**\*.cs" />
-    <EmbeddedResource Include="**\*.resx" />
-    <EmbeddedResource Include="compiler\resources\**\*" />
+    <PackageReference Include="CompareNETObjects" Version="3.06.0" />
+    <PackageReference Include="SharpSettings" Version="1.0.14" />
+    <PackageReference Include="MongoDB.Driver" Version="2.3.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SharpSettings\SharpSettings.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <PackageReference Include="NETStandard.Library">
-      <Version>1.6.1</Version>
-    </PackageReference>
-    <PackageReference Include="MongoDB.Driver">
-      <Version>*</Version>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <PackageReference Include="MongoDB.Driver">
-      <Version>*</Version>
-    </PackageReference>
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
-  </PropertyGroup>
-
 </Project>
