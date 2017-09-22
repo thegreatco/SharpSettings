@@ -42,28 +42,28 @@ namespace SharpSettings.MongoDB
             _settingsUpdatedCallback = settingsUpdatedCallback;
             if (_store.Store.Database.Client.Cluster.Description.Type == ClusterType.ReplicaSet && forcePolling == false)
             {
-                _store.Logger?.Information("Calling start on a Polling task.");
+                _store.Logger?.Debug("Calling start on a Polling task.");
                 _watcherTask = Task.Factory.StartNew(TailAsync, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-                _store.Logger?.Information("Finished calling start on a Polling task.");
+                _store.Logger?.Debug("Finished calling start on a Polling task.");
             }
             else
             {
-                _store.Logger?.Information("Calling start on a Watcher task.");
+                _store.Logger?.Debug("Calling start on a Watcher task.");
                 _watcherTask = Task.Factory.StartNew(PollAsync, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-                _store.Logger?.Information("Finished calling start on a Watcher task.");
+                _store.Logger?.Debug("Finished calling start on a Watcher task.");
             }
         }
 
         private async Task PollAsync()
         {
-            _store.Logger?.Information("Starting a Polling task.");
+            _store.Logger?.Trace("Starting a Polling task.");
             while (!_cts.IsCancellationRequested)
             {
                 try
                 {
                     if (_store.Store.Database.Client.Cluster.Description.Type == ClusterType.ReplicaSet)
                     {
-                        _store.Logger?.Information("Detected change to replica set. Changing to OpLog Tail.");
+                        _store.Logger?.Trace("Detected change to replica set. Changing to OpLog Tail.");
 
                         _watcherTask = Task.Factory.StartNew(TailAsync, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                         break;
@@ -72,38 +72,39 @@ namespace SharpSettings.MongoDB
 
                     if (_compareLogic.Compare(tmpSettings, _settings).AreEqual == false)
                     {
-                        _store.Logger?.Information("Settings updated.");
+                        _store.Logger?.Trace("Settings updated.");
 
                         _settings = tmpSettings;
                         _settingsUpdatedCallback?.Invoke(_settings);
 
-                        _store.Logger?.Information("SettingsWatcher notified.");
+                        _store.Logger?.Trace("SettingsWatcher notified.");
                     }
                     if (_settings == null)
-                        throw new Exception("Settings not found.");
-
-                    await Task.Delay(1000);
+                    {
+                        _store.Logger?.Warn("Settings not found.");
+                    }
                 }
                 catch (Exception ex)
                 {
                     _store.Logger?.Error(ex);
                 }
+                await Task.Delay(500);
             }
-            _store.Logger?.Information("Ending a Polling task.");
+            _store.Logger?.Trace("Ending a Polling task.");
         }
 
         private async Task TailAsync()
         {
-            _store.Logger?.Information("Starting a Tailing task.");
+            _store.Logger?.Trace("Starting a Tailing task.");
             var token = _cts.Token;
-            _store.Logger?.Information("Doing initial setting read");
+            _store.Logger?.Trace("Doing initial setting read");
             _settings = await _store.FindAsync(_settingsId);
             if(_settings == null)
             {
                 throw new Exception("Failed to do intial settings load.");
             }
             
-            _store.Logger?.Information("Initial settings loaded.");
+            _store.Logger?.Trace("Initial settings loaded.");
             var localDb = _store.Store.Database.Client.GetDatabase("local");
             var oplog = localDb.GetCollection<BsonDocument>("oplog.rs");
             while (!token.IsCancellationRequested)
@@ -112,7 +113,7 @@ namespace SharpSettings.MongoDB
                 {
                     if (_store.Store.Database.Client.Cluster.Description.Type != ClusterType.ReplicaSet)
                     {
-                        _store.Logger?.Information("Detected change to non-replica set. Changing to Poll.");
+                        _store.Logger?.Trace("Detected change to non-replica set. Changing to Poll.");
                         _watcherTask = Task.Factory.StartNew(PollAsync, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                         break;
                     }
@@ -131,12 +132,12 @@ namespace SharpSettings.MongoDB
                         {
                             if (new DateTime(1970, 1, 1).AddSeconds(update["ts"].AsBsonTimestamp.Timestamp) < DateTime.UtcNow.AddSeconds(-10)) continue;
 
-                            _store.Logger?.Information("Settings updated.");
+                            _store.Logger?.Trace("Settings updated.");
 
                             _settings = await _store.FindAsync(_settingsId);
                             _settingsUpdatedCallback?.Invoke(_settings);
 
-                            _store.Logger?.Information("SettingsWatcher notified.");
+                            _store.Logger?.Trace("SettingsWatcher notified.");
                         }
                     }
                 }
@@ -145,7 +146,7 @@ namespace SharpSettings.MongoDB
                     _store.Logger?.Error(ex);
                 }
             }
-            _store.Logger?.Information("Ending a Tailing task.");
+            _store.Logger?.Trace("Ending a Tailing task.");
         }
 
         public void Dispose()
