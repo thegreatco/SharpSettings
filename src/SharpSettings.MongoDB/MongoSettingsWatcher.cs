@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using KellermanSoftware.CompareNetObjects;
+using KellermanSoftware.CompareNetObjects.TypeComparers;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Clusters;
@@ -29,28 +31,37 @@ namespace SharpSettings.MongoDB
             return _settings;
         }
 
-        public MongoSettingsWatcher(MongoDataStore<TSettingsObject> settingsStore, MongoWatchableSettings settings, Action<TSettingsObject> settingsUpdatedCallback, bool forcePolling = false)
-            : this(settingsStore, settings.Id, settingsUpdatedCallback, forcePolling)
+        public MongoSettingsWatcher(MongoDataStore<TSettingsObject> settingsStore, MongoWatchableSettings settings,
+            Action<TSettingsObject> settingsUpdatedCallback, bool forcePolling = false,
+            IEnumerable<BaseTypeComparer> customComparers = null)
+            : this(settingsStore, settings.Id, settingsUpdatedCallback, forcePolling, customComparers)
         {
         }
 
-        public MongoSettingsWatcher(MongoDataStore<TSettingsObject> settingsStore, string settingsId, Action<TSettingsObject> settingsUpdatedCallback, bool forcePolling = false)
+        public MongoSettingsWatcher(MongoDataStore<TSettingsObject> settingsStore, string settingsId,
+            Action<TSettingsObject> settingsUpdatedCallback, bool forcePolling = false,
+            IEnumerable<BaseTypeComparer> customComparers = null)
         {
             _compareLogic = new CompareLogic();
+            if (customComparers != null)
+                _compareLogic.Config.CustomComparers.AddRange(customComparers);
             _store = settingsStore;
             _settingsId = settingsId;
             _settingsUpdatedCallback = settingsUpdatedCallback;
-            if (_store.Store.Database.Client.Cluster.Description.Type == ClusterType.ReplicaSet && forcePolling == false)
+            if (_store.Store.Database.Client.Cluster.Description.Type == ClusterType.ReplicaSet &&
+                forcePolling == false)
             {
-                _store.Logger?.Debug("Calling start on a Polling task.");
-                _watcherTask = Task.Factory.StartNew(TailAsync, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-                _store.Logger?.Debug("Finished calling start on a Polling task.");
+                _store.Logger?.Debug("Calling start on a Watcher task.");
+                _watcherTask = Task.Factory.StartNew(TailAsync, _cts.Token, TaskCreationOptions.LongRunning,
+                    TaskScheduler.Default);
+                _store.Logger?.Debug("Finished calling start on a Watcher task.");
             }
             else
             {
-                _store.Logger?.Debug("Calling start on a Watcher task.");
-                _watcherTask = Task.Factory.StartNew(PollAsync, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-                _store.Logger?.Debug("Finished calling start on a Watcher task.");
+                _store.Logger?.Debug("Calling start on a Polling task.");
+                _watcherTask = Task.Factory.StartNew(PollAsync, _cts.Token, TaskCreationOptions.LongRunning,
+                    TaskScheduler.Default);
+                _store.Logger?.Debug("Finished calling start on a Polling task.");
             }
         }
 
