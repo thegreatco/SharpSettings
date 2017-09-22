@@ -17,7 +17,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CompareNETObjects" Version="3.06.0" />
-    <PackageReference Include="SharpSettings" Version="1.0.14" />
     <PackageReference Include="MongoDB.Driver" Version="2.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpSettings\SharpSettings.csproj" />
   </ItemGroup>
 </Project>
