@@ -12,6 +12,7 @@ namespace SharpSettings.MongoDB
 {
     public class MongoSettingsWatcher<TSettingsObject> : ISettingsWatcher<string, TSettingsObject> where TSettingsObject : MongoWatchableSettings
     {
+        private readonly bool _forcePolling;
         private readonly string _settingsId;
         private readonly CompareLogic _compareLogic;
         private readonly MongoDataStore<TSettingsObject> _store;
@@ -42,6 +43,7 @@ namespace SharpSettings.MongoDB
             Action<TSettingsObject> settingsUpdatedCallback, bool forcePolling = false,
             IEnumerable<BaseTypeComparer> customComparers = null)
         {
+            _forcePolling = forcePolling;
             _compareLogic = new CompareLogic();
             if (customComparers != null)
                 _compareLogic.Config.CustomComparers.AddRange(customComparers);
@@ -72,7 +74,7 @@ namespace SharpSettings.MongoDB
             {
                 try
                 {
-                    if (_store.Store.Database.Client.Cluster.Description.Type == ClusterType.ReplicaSet)
+                    if (_store.Store.Database.Client.Cluster.Description.Type == ClusterType.ReplicaSet && !_forcePolling)
                     {
                         _store.Logger?.Trace("Detected change to replica set. Changing to OpLog Tail.");
 
