@@ -2,7 +2,7 @@ using System;
 
 namespace SharpSettings
 {
-    public interface ILogger
+    public interface ISharpSettingsLogger
     {
         void Critical(string message);
         void Critical(Exception ex);

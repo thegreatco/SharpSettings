@@ -1,15 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>netstandard1.5</TargetFramework>
     <DebugType>portable</DebugType>
-    <AssemblyName>SharpSettings</AssemblyName>
-    <RootNamespace>SharpSettings</RootNamespace>
+    <AssemblyName>SharpSettings.InMemory</AssemblyName>
+    <RootNamespace>SharpSettings.InMemory</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>TheGreatCO</Authors>
     <Company>TheGreatCO</Company>
-    <Description>Store your application settings in MongoDB and get notified when they get updated.</Description>
-    <PackageProjectUrl>https://github.com/thegreatco/SharpSettings</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/thegreatco/SharpSettings</RepositoryUrl>
+    <Description>Store your application settings in an InMemory collection and get notified when they get updated.</Description>
     <Version Condition=" '$(CIRCLE_BUILD_NUM)' == '' ">1.0.0.0</Version>
     <Version Condition=" '$(CIRCLE_BUILD_NUM)' != '' ">1.0.$(CIRCLE_BUILD_NUM).0</Version>
     <AssemblyVersion Condition=" '$(CIRCLE_BUILD_NUM)' == '' ">1.0.0.0</AssemblyVersion>
@@ -17,4 +16,12 @@
     <FileVersion Condition=" '$(CIRCLE_BUILD_NUM)' == '' ">1.0.0.0</FileVersion>
     <FileVersion Condition=" '$(CIRCLE_BUILD_NUM)' != '' ">1.0.$(CIRCLE_BUILD_NUM).0</FileVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CompareNETObjects" Version="4.52.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpSettings\SharpSettings.csproj" />
+  </ItemGroup>
+
 </Project>
