@@ -17,9 +17,12 @@ jobs:
     environment:
       - DOTNET_CLI_TELEMETRY_OPTOUT: "true"
       - DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
-      - RELEASE_VERSION: ${CIRCLE_TAG}.${CIRCLE_BUILD_NUM}
     steps:
       - checkout
+      - run:
+        command: |
+          echo 'export RELEASE_VERSION=${CIRCLE_TAG}.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+          source $BASH_ENV
       - run: dotnet restore SharpSettings.sln
       - run: dotnet pack src/SharpSettings/SharpSettings.csproj -o ../../nupkgs --include-symbols
       # - run: dotnet nuget push nupkgs/SharpSettings.$(RELEASE_VERSION).symbols.nupkg -k ${NUGET_API_KEY} -s nuget.org
@@ -29,9 +32,12 @@ jobs:
     environment:
       - DOTNET_CLI_TELEMETRY_OPTOUT: "true"
       - DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
-      - RELEASE_VERSION: ${CIRCLE_TAG}.${CIRCLE_BUILD_NUM}
     steps:
       - checkout
+      - run:
+        command: |
+          echo 'export RELEASE_VERSION=${CIRCLE_TAG}.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+          source $BASH_ENV
       - run: dotnet restore SharpSettings.sln
       - run: dotnet pack src/SharpSettings/SharpSettings.csproj -o ../../nupkgs --include-symbols
       # - run: dotnet nuget push nupkgs/SharpSettings.$(RELEASE_VERSION).symbols.nupkg -k ${NUGET_API_KEY} -s nuget.org
