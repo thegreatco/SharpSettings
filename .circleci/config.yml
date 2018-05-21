@@ -25,7 +25,7 @@ jobs:
             source $BASH_ENV
       - run: dotnet restore SharpSettings.sln
       - run: dotnet pack src/SharpSettings/SharpSettings.csproj -o ../../nupkgs --include-symbols
-      # - run: dotnet nuget push nupkgs/SharpSettings.$(RELEASE_VERSION).symbols.nupkg -k ${NUGET_API_KEY} -s nuget.org
+      # - run: dotnet nuget push nupkgs/SharpSettings.${RELEASE_VERSION}.symbols.nupkg -k ${NUGET_API_KEY} -s nuget.org
   deploy-release:
     docker:
       - image: microsoft/dotnet:sdk
@@ -40,7 +40,7 @@ jobs:
             source $BASH_ENV
       - run: dotnet restore SharpSettings.sln
       - run: dotnet pack src/SharpSettings/SharpSettings.csproj -o ../../nupkgs --include-symbols
-      - run: dotnet nuget push nupkgs/SharpSettings.$(RELEASE_VERSION).symbols.nupkg -k ${NUGET_API_KEY} -s nuget.org
+      - run: dotnet nuget push nupkgs/SharpSettings.${RELEASE_VERSION}.symbols.nupkg -k ${NUGET_API_KEY} -s nuget.org
 
 workflows:
   version: 2
