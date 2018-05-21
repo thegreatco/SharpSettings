@@ -1,0 +1,58 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: microsoft/dotnet:sdk
+      
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
+
+    working_directory: ~/repo
+    environment:
+      - DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+      - DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+    branches:
+      only: master
+
+    steps:
+      - checkout
+      
+      - run: dotnet restore SharpSettings.sln
+      - run: dotnet build src/SharpSettings/SharpSettings.Core.csproj
+
+  deploy:
+    docker:
+      # specify the version you desire here
+      - image: microsoft/dotnet:sdk
+      
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
+
+    working_directory: ~/repo
+    environment:
+      - DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+      - DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+      - RELEASE_VERSION: ${CIRCLE_TAG}.${CIRCLE_BUILD_NUM}
+    branches:
+      only: master
+    tags:
+      only: /[0-9]+(\.[0-9]+)*/
+
+    steps:
+      - checkout
+      
+      - run: dotnet restore SharpSettings.sln
+      
+      - run: dotnet pack src/SharpSettings/SharpSettings.csproj -o ../../nupkgs --include-symbols
+      # - run: dotnet nuget push nupkgs/SharpSettings.$(RELEASE_VERSION).symbols.nupkg -k ${NUGET_API_KEY} -s nuget.org
+
+      # - persist_to_workspace:
+      #     root: ~/repo
+      #     paths:
+      #       - .
