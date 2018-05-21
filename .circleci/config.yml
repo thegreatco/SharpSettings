@@ -54,7 +54,7 @@ workflows:
           requires: 
             - build
           filters:
-            braches:
+            branches:
               ignore: /.*/
             tags:
               only: /^[0-9]+(\.[0-9]+)*-pre/
@@ -62,7 +62,7 @@ workflows:
           requires: 
             - build
           filters:
-            braches:
+            branches:
               ignore: /.*/
             tags:
               only: /^[0-9]+(\.[0-9]+)*/
