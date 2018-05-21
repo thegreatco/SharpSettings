@@ -22,7 +22,7 @@ jobs:
       - checkout
       
       - run: dotnet restore SharpSettings.sln
-      - run: dotnet build src/SharpSettings/SharpSettings.Core.csproj
+      - run: dotnet build src/SharpSettings/SharpSettings.csproj
 
   deploy:
     docker:
