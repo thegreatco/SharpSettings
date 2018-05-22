@@ -6,6 +6,6 @@ namespace SharpSettings
 {
     public interface ISettingsWatcher<TId, TSettings> : IDisposable where TSettings : WatchableSettings<TId>
     {
-        Task<TSettings> GetSettingsAsync(CancellationToken token);
+        Task<TSettings> GetSettingsAsync(CancellationToken cancellationToken = default(CancellationToken));
     }
 }
