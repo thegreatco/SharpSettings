@@ -25,7 +25,8 @@ jobs:
             echo 'export NUGET_VERSION=${CIRCLE_TAG}' >> $BASH_ENV
             source $BASH_ENV
       - run: curl -OL https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
-      - run: nuget setApiKey ${NUGET_API_KEY}
+      - run: chmod +x ./nuget
+      - run: ./nuget setApiKey ${NUGET_API_KEY}
       - run: dotnet restore SharpSettings.sln
       - run: dotnet pack src/SharpSettings/SharpSettings.csproj -o ../../nupkgs --include-symbols /p:Version=${NUGET_VERSION}
       - run: nuget push nupkgs/SharpSettings.${NUGET_VERSION}.nupkg -source https://api.nuget.org/v3/index.json
