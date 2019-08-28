@@ -24,13 +24,14 @@ jobs:
             echo 'export FILE_VERSION=${CIRCLE_TAG}.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
             echo 'export NUGET_VERSION=${CIRCLE_TAG}' >> $BASH_ENV
             source $BASH_ENV
-      - run: curl https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -o ~/nuget.exe
-      - run: chmod +x ./nuget
-      - run: ./nuget setApiKey ${NUGET_API_KEY}
       - run: dotnet restore SharpSettings.sln
       - run: dotnet pack src/SharpSettings/SharpSettings.csproj -o ../../nupkgs --include-symbols /p:Version=${NUGET_VERSION}
-      - run: nuget push nupkgs/SharpSettings.${NUGET_VERSION}.nupkg -source https://api.nuget.org/v3/index.json
-      - run: nuget push nupkgs/SharpSettings.${NUGET_VERSION}.symbols.nupkg -source https://nuget.smbsrc.net/
+      - run: dotnet nuget push nupkgs/SharpSettings.${NUGET_VERSION}.nupkg -k ${NUGET_API_KEY} -s https://api.nuget.org/v3/index.json
+      - run: dotnet nuget push nupkgs/SharpSettings.${NUGET_VERSION}.symbols.nupkg -sk ${NUGET_API_KEY} -ss https://nuget.smbsrc.net/
+      - store_artifacts:
+          path: nupkgs
+      - store_artifacts:
+          path: src/SharpSettings/SharpSettings/bin/Debug
 
 workflows:
   version: 2
