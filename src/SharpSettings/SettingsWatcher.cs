@@ -4,7 +4,11 @@ using System.Threading.Tasks;
 
 namespace SharpSettings
 {
+    #if NETSTANDARD2_1
     public interface ISettingsWatcher<TId, TSettings> : IDisposable, IAsyncDisposable where TSettings : WatchableSettings<TId>
+    #else
+    public interface ISettingsWatcher<TId, TSettings> : IDisposable where TSettings : WatchableSettings<TId>
+    #endif
     {
         /// <summary>
         /// Get the <see cref="TSettings"/> object
